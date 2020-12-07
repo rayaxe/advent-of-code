@@ -1,15 +1,15 @@
 fun day2Part1(passwords: List<String>): Int {
-    return passwords.stream()
+    return passwords
         .map { text -> parseFields(text) }
         .filter { (policy, password) -> isValid(password, policy) }
-        .count().toInt()
+        .count()
 }
 
 fun day2Part2(passwords: List<String>): Int {
-    return passwords.stream()
+    return passwords
         .map { text -> parseFields(text) }
         .filter { (policy, password) -> isValidOfficial(password, policy) }
-        .count().toInt()
+        .count()
 }
 
 private fun isValid(password: String, policy: Triple<Int, Int, String>): Boolean {

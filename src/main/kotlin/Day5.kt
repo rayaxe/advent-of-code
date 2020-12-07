@@ -1,25 +1,16 @@
 import java.lang.IllegalArgumentException
-import kotlin.streams.toList
 
 fun day5Part1(seats: List<String>): Long {
-    return seats.stream()
+    return seats
         .map { findSeatNumber(it) }
-        .toList()
         .maxOrNull() ?: 0
 }
 
 fun day5Part2(seats: List<String>): Long {
-    val numbers = seats
+    val seatNumbers = seats
         .map { findSeatNumber(it) }
         .sorted()
-    var next = numbers[0]
-    for (seat in numbers) {
-        if (seat != next) {
-            break
-        }
-        next++
-    }
-    return next
+    return findMissingNumber(seatNumbers)
 }
 
 fun findSeatNumber(seat: String): Long {
@@ -39,5 +30,16 @@ private tailrec fun find(tail: String, lower: Int, upper: Int): Int {
         'B', 'R' -> Pair(lower + half, upper)
         else -> throw IllegalArgumentException("Unexpected character: '$head'")
     }
-    return find(tail.substring(1 until tail.length), bounds.first, bounds.second)
+    return find(tail.drop(1), bounds.first, bounds.second)
+}
+
+private fun findMissingNumber(numbers: List<Long>): Long {
+    var next = numbers[0]
+    for (number in numbers) {
+        if (number != next) {
+            break
+        }
+        next++
+    }
+    return next
 }

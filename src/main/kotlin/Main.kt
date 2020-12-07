@@ -1,4 +1,5 @@
 import java.io.File
+import java.nio.charset.Charset
 
 fun main() {
 //    println(day1Part1(readLinesFromFile("day1.txt")))
@@ -10,7 +11,16 @@ fun main() {
 //    println(day4Part1(readLinesFromFile("day4.txt")))
 //    println(day4Part2(readLinesFromFile("day4.txt")))
 //    println(day5Part1(readLinesFromFile("day5.txt")))
-    println(day5Part2(readLinesFromFile("day5.txt")))
+//    println(day5Part2(readLinesFromFile("day5.txt")))
+//    println(day6Part1(readAndSplitByEmptyLines("day6.txt")))
+//    println(day6Part2(readAndSplitByEmptyLines("day6.txt")))
+//    println(day7Part1(readLinesFromFile("day7.txt")))
+    println(day7Part2(readLinesFromFile("day7.txt")))
 }
 
 private fun readLinesFromFile(filename: String) = File("src//main//resources//$filename").readLines()
+
+fun readAndSplitByEmptyLines(filename: String) = File("src//main//resources//$filename")
+    .readText(Charset.forName("UTF-8"))
+    .split("\n\n")
+    .map { it.split("\n") }
