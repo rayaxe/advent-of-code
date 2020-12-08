@@ -15,7 +15,11 @@ fun main() {
 //    println(day6Part1(readAndSplitByEmptyLines("day6.txt")))
 //    println(day6Part2(readAndSplitByEmptyLines("day6.txt")))
 //    println(day7Part1(readLinesFromFile("day7.txt")))
-    println(day7Part2(readLinesFromFile("day7.txt")))
+//    println(day7Part2(readLinesFromFile("day7.txt")))
+//    println(day8Part1(readLinesFromFile("day8.txt")))
+//    println(day8Part2(readLinesFromFile("day8.txt")))
+    println(day9Part1(readLinesFromFile("day9.txt")))
+    println(day9Part2(readLinesFromFile("day9.txt")))
 }
 
 private fun readLinesFromFile(filename: String) = File("src//main//resources//$filename").readLines()
