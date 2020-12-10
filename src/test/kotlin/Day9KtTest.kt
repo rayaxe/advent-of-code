@@ -5,15 +5,53 @@ internal class Day9KtTest {
 
     @Test
     fun testDay9Part1() {
-        val input = ""
+        val input = "35\n" +
+                "20\n" +
+                "15\n" +
+                "25\n" +
+                "47\n" +
+                "40\n" +
+                "62\n" +
+                "55\n" +
+                "65\n" +
+                "95\n" +
+                "102\n" +
+                "117\n" +
+                "150\n" +
+                "182\n" +
+                "127\n" +
+                "219\n" +
+                "299\n" +
+                "277\n" +
+                "309\n" +
+                "576"
         val values = input.split("\n")
-        assertEquals(-1, day9Part1(values))
+        assertEquals(127, day9Part1(values, 5))
     }
 
     @Test
     fun testDay9Part2() {
-        val input = ""
+        val input = "35\n" +
+                "20\n" +
+                "15\n" +
+                "25\n" +
+                "47\n" +
+                "40\n" +
+                "62\n" +
+                "55\n" +
+                "65\n" +
+                "95\n" +
+                "102\n" +
+                "117\n" +
+                "150\n" +
+                "182\n" +
+                "127\n" +
+                "219\n" +
+                "299\n" +
+                "277\n" +
+                "309\n" +
+                "576"
         val values = input.split("\n")
-        assertEquals(-1, day9Part2(values))
+        assertEquals(62, day9Part2(values, 127))
     }
 }

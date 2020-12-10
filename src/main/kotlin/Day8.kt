@@ -14,7 +14,7 @@ fun day8Part2(code: List<String>): Long {
     for (i in instructions.indices) {
         val instruction = instructions[i]
         if (instruction.operation != "acc") {
-            val result = run(mutate(instructions, i))
+            val result = run(mutate(instructions.toMutableList(), i))
             if (result.second) {
                 return result.first
             }
@@ -23,17 +23,15 @@ fun day8Part2(code: List<String>): Long {
     return -1
 }
 
-private fun mutate(original: List<Instruction>, i: Int): MutableList<Instruction> {
-    val instructions = original.toMutableList()
+private fun mutate(instructions: MutableList<Instruction>, i: Int): MutableList<Instruction> {
     instructions.forEach { it.counter = 0 }
     val instruction = instructions[i]
-    val operation = if (instruction.operation == "jmp") {
-        "nop"
-    } else {
-        "jmp"
-    }
-    instructions[i] = Instruction(operation, instruction.parameter)
+    instructions[i] = Instruction(swap(instruction.operation), instruction.parameter)
     return instructions
+}
+
+private fun swap(operation: String): String {
+    return if (operation == "jmp") "nop" else "jmp"
 }
 
 private fun run(instructions: List<Instruction>): Pair<Long, Boolean> {
