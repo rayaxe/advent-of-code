@@ -21,12 +21,16 @@ fun main() {
 //    println(day9Part1(readLinesFromFile("day9.txt"), 25))
 //    println(day9Part2(readLinesFromFile("day9.txt"), 375054920))
 //    println(day10Part1(readLinesFromFile("day10.txt")))
-    println(day10Part2(readLinesFromFile("day10.txt")))
+//    println(day10Part2(readLinesFromFile("day10.txt")))
+//    println(day11Part1(readLinesFromFile("day11.txt")))
+    println(day11Part2(readLinesFromFile("day11.txt")))
+//    println(day12Part1(readLinesFromFile("day12.txt")))
+//    println(day12Part2(readLinesFromFile("day12.txt")))
 }
 
-private fun readLinesFromFile(filename: String) = File("src//main//resources//$filename").readLines()
-
-fun readAndSplitByEmptyLines(filename: String) = File("src//main//resources//$filename")
+private fun readLinesFromFile(filename: String) = File("src//main//resources//$filename")
+    .readLines()
+private fun readAndSplitByEmptyLines(filename: String) = File("src//main//resources//$filename")
     .readText(Charset.forName("UTF-8"))
     .split("\n\n")
     .map { it.split("\n") }
