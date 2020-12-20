@@ -2,19 +2,24 @@ import java.util.*
 import kotlin.math.max
 
 fun day18Part1(input: List<String>): Long {
-    return input
-        .map { parse(it.replace(" ", "")) { _, _ -> true } }
-        .sum()
+    return parse(input) { _, _ -> true }
 }
 
 fun day18Part2(input: List<String>): Long {
+    return parse(input) { token, top -> token == '*' && top == '+' }
+}
+
+private fun parse(input: List<String>, hasLowerPrecedence: (Char, Char) -> Boolean): Long {
     return input
-        .map { parse(it.replace(" ", "")) { token, top -> token == '*' && top == '+' } }
+        .map { it.replace(" ", "") }
+        .map { parseExpression(it, hasLowerPrecedence) }
+        .map { evaluate(it) }
         .sum()
 }
 
 // Shunting-yard algorithm: https://en.m.wikipedia.org/wiki/Shunting-yard_algorithm
-private fun parse(input: String, hasPrecedence: (Char, Char) -> Boolean): Long {
+// Only supports relevant operations
+private fun parseExpression(input: String, hasLowerPrecedence: (Char, Char) -> Boolean): MutableList<String> {
     val tokens = input.toMutableList()
     val operators: Deque<Char> = ArrayDeque<Char>()
     val output = mutableListOf<String>()
@@ -23,7 +28,11 @@ private fun parse(input: String, hasPrecedence: (Char, Char) -> Boolean): Long {
         when {
             token.isDigit() -> output.add(token.toString())
             token in listOf('+', '*') -> {
-                while (operators.isNotEmpty() && hasPrecedence(token, operators.peek()) && operators.peek() != '(') {
+                while (operators.isNotEmpty() && hasLowerPrecedence(
+                        token,
+                        operators.peek()
+                    ) && operators.peek() != '('
+                ) {
                     output.add(operators.pop().toString())
                 }
                 operators.push(token)
@@ -42,7 +51,7 @@ private fun parse(input: String, hasPrecedence: (Char, Char) -> Boolean): Long {
     while (operators.isNotEmpty()) {
         output.add(operators.remove().toString())
     }
-    return evaluate(output)
+    return output
 }
 
 // Evaluate Reverse Polish notation (RPN)
