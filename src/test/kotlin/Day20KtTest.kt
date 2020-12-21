@@ -10,9 +10,7 @@ internal class Day20KtTest {
 
     @Test
     fun testDay20Part2() {
-        val input = ""
-        val values = input //.split("\n")
-        assertEquals(-1L, day20Part2(values))
+        assertEquals(273L, day20Part2(input))
     }
 
     val input = "Tile 2311:\n" +
