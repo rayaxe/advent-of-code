@@ -71,6 +71,6 @@ internal class Day19KtTest {
                 "babaaabbbaaabaababbaabababaaab\n" +
                 "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"
         val values = input.split("\n")
-        assertEquals(19L, day19Part2(values))
+        assertEquals(12L, day19Part2(values))
     }
 }
