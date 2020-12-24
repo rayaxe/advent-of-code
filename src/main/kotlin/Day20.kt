@@ -8,8 +8,8 @@ fun day20Part1(input: String): Long {
     while (i < tiles.size) {
         var j = i + 1
         while (j < tiles.size) {
-            val matches = matchesAnyBorder(tiles[i], tiles[j])
-            if (matches) {
+            val matchingBorders = findMatchingBorders(tiles[i].borders, tiles[j].borders)
+            if (matchingBorders) {
                 result[i] = Pair(result[i].first, result[i].second + 1)
                 result[j] = Pair(result[j].first, result[j].second + 1)
             }
@@ -23,7 +23,32 @@ fun day20Part1(input: String): Long {
 }
 
 fun day20Part2(input: String): Long {
+    val tiles = input.split("\n\n")
+        .map { parse(it.split("\n")) }
+    val result = matchBorders(tiles)
     return -1L
+}
+
+private fun matchBorders(tiles: List<Tile>): MutableList<Pair<Long, Long>> {
+    val result = tiles.map { it.id to 0L }.toMutableList()
+    var i = 0
+    while (i < tiles.size) {
+        var j = i + 1
+        while (j < tiles.size) {
+            val matchingBorders = findMatchingBorders(tiles[i].borders, tiles[j].borders)
+            if (matchingBorders) {
+                result[i] = Pair(result[i].first, result[i].second + 1)
+                result[j] = Pair(result[j].first, result[j].second + 1)
+            }
+            j++
+        }
+        i++
+    }
+    return result
+}
+
+private fun findMatchingBorders(borders1: List<String>, borders2: List<String>): Boolean {
+    return borders1.any { border1 -> borders2.any { border2 -> border1 == border2 } }
 }
 
 private fun parse(input: List<String>): Tile {
@@ -35,15 +60,25 @@ private fun parse(input: List<String>): Tile {
             image[y][x] = imageInput[y][x]
         }
     }
-    val topBorder: String = image[0].joinToString("")
-    val rightBorder: String = image.fold("") { acc, chars -> acc + chars[9] }
-    val bottomBorder: String = image[9].joinToString("")
-    val leftBorder: String = image.fold("") { acc, chars -> acc + chars[0] }
-    return Tile(id, listOf(topBorder, rightBorder, bottomBorder, leftBorder))
-}
-
-private fun matchesAnyBorder(tile1: Tile, tile2: Tile): Boolean {
-    val borders1 = tile1.borders.map { listOf(it, it.reversed()) }.flatten()
-    val borders2 = tile2.borders.map { listOf(it, it.reversed()) }.flatten()
-    return borders1.any { border1 -> borders2.any { border2 -> border1 == border2 } }
+    val topBorder = image[0].joinToString("")
+    val rightBorder = image.fold("") { acc, chars -> acc + chars[9] }
+    val bottomBorder = image[9].joinToString("")
+    val leftBorder = image.fold("") { acc, chars -> acc + chars[0] }
+    val flippedTopBorder = topBorder.reversed()
+    val flippedRightBorder = leftBorder.reversed()
+    val flippedBottomBorder = bottomBorder.reversed()
+    val flippedLeftBorder = rightBorder.reversed()
+    return Tile(
+        id,
+        listOf(
+            topBorder,
+            rightBorder,
+            bottomBorder,
+            leftBorder,
+            flippedTopBorder,
+            flippedRightBorder,
+            flippedBottomBorder,
+            flippedLeftBorder
+        )
+    )
 }
