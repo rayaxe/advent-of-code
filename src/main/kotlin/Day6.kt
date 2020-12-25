@@ -3,7 +3,6 @@ private fun intersect() = { acc: Set<Char>, set: Set<Char> -> acc intersect set 
 
 fun day6Part1(answerGroups: List<List<String>>): Long {
     return sumAnswers(answerGroups, union())
-
 }
 
 fun day6Part2(answerGroups: List<List<String>>): Long {

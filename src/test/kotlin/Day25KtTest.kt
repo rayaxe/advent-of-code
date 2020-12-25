@@ -7,13 +7,13 @@ internal class Day25KtTest {
     fun testDay25Part1() {
         val input = ""
         val values = input.split("\n")
-        assertEquals(-1L, day24Part1(values))
+        assertEquals(-1L, day25Part1(values))
     }
 
     @Test
     fun testDay25Part2() {
         val input = ""
         val values = input.split("\n")
-        assertEquals(-1L, day24Part2(values))
+        assertEquals(-1L, day25Part2(values))
     }
 }
