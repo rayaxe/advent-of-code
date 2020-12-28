@@ -9,6 +9,27 @@ internal class Day20KtTest {
     }
 
     @Test
+    fun testParseTile() {
+        val input = "Tile 0000:\n" +
+                "ABC\n" +
+                "DEF\n" +
+                "GHI"
+        val tile = parseTile(input.split("\n"))
+        tile.borders.forEach {
+            when (it.orientation) {
+                Orientation.UP -> assertEquals("ABC", it.border, "UP")
+                Orientation.RIGHT -> assertEquals("CFI", it.border, "RIGHT")
+                Orientation.DOWN -> assertEquals("IHG", it.border, "DOWN")
+                Orientation.LEFT -> assertEquals("GDA", it.border, "LEFT")
+                Orientation.UP_FLIPPED -> assertEquals("CBA", it.border, "UP_FLIPPED")
+                Orientation.RIGHT_FLIPPED -> assertEquals("ADG", it.border, "RIGHT_FLIPPED")
+                Orientation.DOWN_FLIPPED -> assertEquals("GHI", it.border, "DOWN_FLIPPED")
+                Orientation.LEFT_FLIPPED -> assertEquals("IFC", it.border, "LEFT_FLIPPED")
+            }
+        }
+    }
+
+    @Test
     fun testDetermineWaterRoughness() {
         val image = stringToImage(example.split("\n"))
         val newImage = rotateImageLeftFlipped(image)
@@ -104,7 +125,7 @@ internal class Day20KtTest {
         assertEquals(273L, day20Part2(input))
     }
 
-    val input = "Tile 2311:\n" +
+    private val input = "Tile 2311:\n" +
             "..##.#..#.\n" +
             "##..#.....\n" +
             "#...##..#.\n" +
@@ -212,7 +233,7 @@ internal class Day20KtTest {
             "..#.......\n" +
             "..#.###..."
 
-    val example = ".#.#..#.##...#.##..#####\n" +
+    private val example = ".#.#..#.##...#.##..#####\n" +
             "###....#.#....#..#......\n" +
             "##.##.###.#.#..######...\n" +
             "###.#####...#.#####.#..#\n" +

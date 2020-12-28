@@ -1,6 +1,6 @@
 import kotlin.math.sqrt
 
-private data class Tile(
+data class Tile(
     val id: Long,
     var borders: List<Border>,
     var isCorner: Boolean = false,
@@ -10,11 +10,11 @@ private data class Tile(
     var newImage: Array<Array<Char>> = Array(10) { Array(10) { '.' } }
 }
 
-private data class Match(val borderFrom: Border, var tileTo: Tile, var borderTo: Border)
-private data class Border(val orientation: Orientation, val border: String)
+data class Match(val borderFrom: Border, var tileTo: Tile, var borderTo: Border)
+data class Border(val orientation: Orientation, val border: String)
 
 enum class Orientation(val isFlipped: Boolean = false) {
-    UP, RIGHT, DOWN, LEFT, UP_FLIPPED(true), LEFT_FLIPPED(true), DOWN_FLIPPED(true), RIGHT_FLIPPED(true);
+    UP, RIGHT, DOWN, LEFT, UP_FLIPPED(true), RIGHT_FLIPPED(true), DOWN_FLIPPED(true), LEFT_FLIPPED(true);
 
     fun rotate(): Orientation {
         return when (this) {
@@ -22,16 +22,16 @@ enum class Orientation(val isFlipped: Boolean = false) {
             RIGHT -> DOWN
             DOWN -> LEFT
             LEFT -> UP
-            UP_FLIPPED -> LEFT_FLIPPED
-            LEFT_FLIPPED -> DOWN_FLIPPED
-            DOWN_FLIPPED -> RIGHT_FLIPPED
-            RIGHT_FLIPPED -> UP_FLIPPED
+            UP_FLIPPED -> RIGHT_FLIPPED
+            RIGHT_FLIPPED -> DOWN_FLIPPED
+            DOWN_FLIPPED -> LEFT_FLIPPED
+            LEFT_FLIPPED -> UP_FLIPPED
         }
     }
 }
 
 fun day20Part1(input: String): Long {
-    val tiles = input.split("\n\n").map { parse(it.split("\n")) }
+    val tiles = input.split("\n\n").map { parseTile(it.split("\n")) }
     val result = tiles.map { it.id to 0L }.toMutableList()
     var i = 0
     while (i < tiles.size) {
@@ -52,7 +52,7 @@ fun day20Part1(input: String): Long {
 }
 
 fun day20Part2(input: String): Long {
-    val tiles = input.split("\n\n").map { parse(it.split("\n")) }
+    val tiles = input.split("\n\n").map { parseTile(it.split("\n")) }
     findAndPopulateBorderMatches(tiles)
     tiles.forEach { if (it.matches.size == 4) it.isCorner = true }
     val puzzle = assemble(tiles)
@@ -180,7 +180,7 @@ private fun findMatchingBorders(
     val matchingBorders2 = mutableListOf<Match>()
     for (border1 in tile1.borders) {
         for (border2 in tile2.borders) {
-            if (border1.border == border2.border) {
+            if (border1.border == border2.border.reversed()) {
                 matchingBorders1.add(Match(border1, tile2, border2))
                 matchingBorders2.add(Match(border2, tile1, border1))
             }
@@ -254,14 +254,15 @@ fun crop(image: Array<Array<Char>>): Array<Array<Char>> {
     return newImage
 }
 
-private fun parse(input: List<String>): Tile {
+fun parseTile(input: List<String>): Tile {
     val id = input.first().substring(5, 9).toLong()
     val imageInput = input.drop(1)
+    val imageWidth = imageInput[0].length
     val image = stringToImage(imageInput)
     val upBorder = image[0].joinToString("")
-    val rightBorder = image.fold("") { acc, chars -> acc + chars[9] }
-    val downBorder = image[9].joinToString("")
-    val leftBorder = image.fold("") { acc, chars -> acc + chars[0] }
+    val rightBorder = image.fold("") { acc, chars -> acc + chars[imageWidth - 1] }
+    val downBorder = image[imageWidth - 1].joinToString("").reversed()
+    val leftBorder = image.fold("") { acc, chars -> acc + chars[0] }.reversed()
     val upFlippedBorder = upBorder.reversed()
     val rightFlippedBorder = leftBorder.reversed()
     val downFlippedBorder = downBorder.reversed()
@@ -273,9 +274,9 @@ private fun parse(input: List<String>): Tile {
             Border(Orientation.DOWN, downBorder),
             Border(Orientation.LEFT, leftBorder),
             Border(Orientation.UP_FLIPPED, upFlippedBorder),
-            Border(Orientation.LEFT_FLIPPED, rightFlippedBorder),
+            Border(Orientation.RIGHT_FLIPPED, rightFlippedBorder),
             Border(Orientation.DOWN_FLIPPED, downFlippedBorder),
-            Border(Orientation.RIGHT_FLIPPED, leftFlippedBorder)
+            Border(Orientation.LEFT_FLIPPED, leftFlippedBorder)
         )
     ).also { it.image = image }
 }
