@@ -1,5 +1,9 @@
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 internal class Day20KtTest {
 
@@ -9,120 +13,58 @@ internal class Day20KtTest {
     }
 
     @Test
-    fun testParseTile() {
+    fun testDay20Part2() {
+        assertEquals(273L, day20Part2(input))
+    }
+
+    @Test
+    fun testParseTileBorders() {
         val input = "Tile 0000:\n" +
                 "ABC\n" +
                 "DEF\n" +
                 "GHI"
         val tile = parseTile(input.split("\n"))
-        tile.borders.forEach {
-            when (it.orientation) {
-                Orientation.UP -> assertEquals("ABC", it.border, "UP")
-                Orientation.RIGHT -> assertEquals("CFI", it.border, "RIGHT")
-                Orientation.DOWN -> assertEquals("IHG", it.border, "DOWN")
-                Orientation.LEFT -> assertEquals("GDA", it.border, "LEFT")
-                Orientation.UP_FLIPPED -> assertEquals("CBA", it.border, "UP_FLIPPED")
-                Orientation.RIGHT_FLIPPED -> assertEquals("ADG", it.border, "RIGHT_FLIPPED")
-                Orientation.DOWN_FLIPPED -> assertEquals("GHI", it.border, "DOWN_FLIPPED")
-                Orientation.LEFT_FLIPPED -> assertEquals("IFC", it.border, "LEFT_FLIPPED")
-            }
-        }
+        val border = { orientation: Orientation -> tile.borders.first { it.orientation == orientation }.border }
+        assertEquals("ABC", border(Orientation.UP))
+        assertEquals("CFI", border(Orientation.RIGHT))
+        assertEquals("IHG", border(Orientation.DOWN))
+        assertEquals("GDA", border(Orientation.LEFT))
+        assertEquals("CBA", border(Orientation.UP_FLIPPED))
+        assertEquals("ADG", border(Orientation.RIGHT_FLIPPED))
+        assertEquals("GHI", border(Orientation.DOWN_FLIPPED))
+        assertEquals("IFC", border(Orientation.LEFT_FLIPPED))
     }
 
     @Test
     fun testDetermineWaterRoughness() {
         val image = stringToImage(example.split("\n"))
-        val newImage = rotateImageLeftFlipped(image)
+        val newImage = rotateRightFlippedBorderUp(image)
         assertEquals(273L, determineWaterRoughness(newImage))
     }
 
-    @Test
-    fun testRotateImageRight() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageRight(stringToImage(input.split("\n")))
-        val expected = "GDA\n" +
-                "HEB\n" +
-                "IFC"
-        assertEquals(expected, imageToString(actual))
+    @ParameterizedTest(name = "Rotate {0} {1} should return {2}")
+    @MethodSource("provideImageRotationExamples")
+    fun testImageRotation(image: Array<Array<Char>>, orientation: Orientation, expected: Array<Array<Char>>) {
+        val actual = rotate(image, orientation)
+        assertEquals(imageToString(expected), imageToString(actual))
     }
 
-    @Test
-    fun testRotateImageDown() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageDown(stringToImage(input.split("\n")))
-        val expected = "IHG\n" +
-                "FED\n" +
-                "CBA"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testRotateImageLeft() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageLeft(stringToImage(input.split("\n")))
-        val expected = "CFI\n" +
-                "BEH\n" +
-                "ADG"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testRotateImageUpFlipped() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageUpFlipped(stringToImage(input.split("\n")))
-        val expected = "CBA\n" +
-                "FED\n" +
-                "IHG"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testRotateImageLeftFlipped() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageLeftFlipped(stringToImage(input.split("\n")))
-        val expected = "ADG\n" +
-                "BEH\n" +
-                "CFI"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testRotateImageDownFlipped() {
-        val input = "ABC\n" +
-                "DEF\n" +
-                "GHI"
-        val actual = rotateImageDownFlipped(stringToImage(input.split("\n")))
-        val expected = "GHI\n" +
-                "DEF\n" +
-                "ABC"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testRotateImageRightFlipped() {
-        val input = "CFI\n" +
-                "BEH\n" +
-                "ADG"
-        val actual = rotateImageRightFlipped(stringToImage(input.split("\n")))
-        val expected = "GHI\n" +
-                "DEF\n" +
-                "ABC"
-        assertEquals(expected, imageToString(actual))
-    }
-
-    @Test
-    fun testDay20Part2() {
-        assertEquals(273L, day20Part2(input))
+    private companion object {
+        @JvmStatic
+        fun provideImageRotationExamples(): Stream<Arguments> {
+            val toImage = { input: String -> stringToImage(input.split("\n")) }
+            val image = toImage("ABC\nDEF\nGHI")
+            return Stream.of(
+                Arguments.of(image, Orientation.UP, toImage("ABC\nDEF\nGHI")),
+                Arguments.of(image, Orientation.LEFT, toImage("GDA\nHEB\nIFC")),
+                Arguments.of(image, Orientation.DOWN, toImage("IHG\nFED\nCBA")),
+                Arguments.of(image, Orientation.RIGHT, toImage("CFI\nBEH\nADG")),
+                Arguments.of(image, Orientation.UP_FLIPPED, toImage("CBA\nFED\nIHG")),
+                Arguments.of(image, Orientation.LEFT_FLIPPED, toImage("IFC\nHEB\nGDA")),
+                Arguments.of(image, Orientation.DOWN_FLIPPED, toImage("GHI\nDEF\nABC")),
+                Arguments.of(image, Orientation.RIGHT_FLIPPED, toImage("ADG\nBEH\nCFI"))
+            )
+        }
     }
 
     private val input = "Tile 2311:\n" +

@@ -1,20 +1,14 @@
 import kotlin.math.sqrt
 
-data class Tile(
-    val id: Long,
-    var borders: List<Border>,
-    var isCorner: Boolean = false,
-    var matches: MutableList<Match> = mutableListOf()
-) {
-    var image: Array<Array<Char>> = Array(10) { Array(10) { '.' } }
-    var newImage: Array<Array<Char>> = Array(10) { Array(10) { '.' } }
+data class Tile(val id: Long, var borders: List<Border>, var matches: MutableList<Match> = mutableListOf()) {
+    var image: Array<Array<Char>> = Array(1) { Array(1) { '.' } }
 }
 
 data class Match(val borderFrom: Border, var tileTo: Tile, var borderTo: Border)
 data class Border(val orientation: Orientation, val border: String)
 
-enum class Orientation(val isFlipped: Boolean = false) {
-    UP, RIGHT, DOWN, LEFT, UP_FLIPPED(true), RIGHT_FLIPPED(true), DOWN_FLIPPED(true), LEFT_FLIPPED(true);
+enum class Orientation {
+    UP, RIGHT, DOWN, LEFT, UP_FLIPPED, RIGHT_FLIPPED, DOWN_FLIPPED, LEFT_FLIPPED;
 
     fun rotate(): Orientation {
         return when (this) {
@@ -54,19 +48,20 @@ fun day20Part1(input: String): Long {
 fun day20Part2(input: String): Long {
     val tiles = input.split("\n\n").map { parseTile(it.split("\n")) }
     findAndPopulateBorderMatches(tiles)
-    tiles.forEach { if (it.matches.size == 4) it.isCorner = true }
-    val puzzle = assemble(tiles)
-    for (y in puzzle.indices) {
-        for (x in puzzle[0].indices) {
-            val (orientation, tile) = puzzle[y][x]
-            tile.newImage = rotate(tile.image, orientation)
-            tile.newImage = crop(tile.newImage)
-        }
-    }
+    val puzzle = lineUp(tiles)
+    val image = assemble(puzzle)
+    return Orientation.values()
+        .map { rotate(image, it) }
+        .map { determineWaterRoughness(it) }
+        .minOrNull()!!
+}
+
+private fun assemble(puzzle: Array<Array<Pair<Orientation, Tile>>>): Array<Array<Char>> {
     val newImage = Array(puzzle.size * 8) { Array(puzzle.size * 8) { '.' } }
     for (j in puzzle.indices) {
         for (i in puzzle[0].indices) {
-            val tileImage = puzzle[j][i].second.newImage
+            val (orientation, tile) = puzzle[j][i]
+            val tileImage = rotate(tile.image, orientation)
             for (y in tileImage.indices) {
                 for (x in tileImage[0].indices) {
                     newImage[y + 8 * j][x + 8 * i] = tileImage[y][x]
@@ -74,17 +69,14 @@ fun day20Part2(input: String): Long {
             }
         }
     }
-    return Orientation.values()
-        .map { rotate(newImage, it) }
-        .map { determineWaterRoughness(it) }
-        .minOrNull()!!
+    return newImage
 }
 
-private const val seaMonsterPattern = "" +
+private const val seaMonster = "" +
         "                  # \n" +
         "#    ##    ##    ###\n" +
         " #  #  #  #  #  #   "
-private val seaMonsterImage = stringToImage(seaMonsterPattern.split("\n"))
+private val seaMonsterImage = stringToImage(seaMonster.split("\n"))
 
 fun determineWaterRoughness(image: Array<Array<Char>>): Long {
     for (y in 0..(image.size - seaMonsterImage.size)) {
@@ -120,32 +112,36 @@ fun determineWaterRoughness(image: Array<Array<Char>>): Long {
     return count
 }
 
-private fun assemble(tiles: List<Tile>): Array<Array<Pair<Orientation, Tile>>> {
+private fun lineUp(tiles: List<Tile>): Array<Array<Pair<Orientation, Tile>>> {
     val puzzleWidth = sqrt(tiles.size.toDouble()).toInt()
     val puzzle = Array(puzzleWidth) { Array(puzzleWidth) { Orientation.UP to Tile(-1L, listOf()) } }
 
-    var currentTile = tiles.first { it.isCorner }
-    var currentMatch = findTopLeftCornerMatch(currentTile.matches)
-    puzzle[0][0] = currentMatch.borderFrom.orientation.rotate().rotate().rotate() to currentTile
+    var tile = tiles.first { it.matches.size == 4 }
+    var nextMatch = findTopLeftCornerMatch(tile.matches)
+    puzzle[0][0] = nextMatch.borderFrom.orientation.rotate().rotate().rotate() to tile
 
     for (y in puzzle.indices) {
         for (x in puzzle[0].indices) {
             if (x == 0) {
                 if (y == 0) {
+                    // Skip start tile
                     continue
                 }
+                // Find and add first row tile
                 val (prevOrientation, prevTile) = puzzle[y - 1][x]
-                currentMatch = prevTile.matches.first { it.borderFrom.orientation == prevOrientation.rotate().rotate() }
-                currentTile = currentMatch.tileTo
-                puzzle[y][x] = currentMatch.borderTo.orientation to currentTile
-                currentMatch =
-                    currentTile.matches.first { it.borderFrom.orientation == currentMatch.borderTo.orientation.rotate() }
+                nextMatch = prevTile.matches.first { it.borderFrom.orientation == prevOrientation.rotate().rotate() }
+                tile = nextMatch.tileTo
+                puzzle[y][x] = nextMatch.borderTo.orientation to tile
+                // Find next match
+                nextMatch = tile.matches.first { it.borderFrom.orientation == nextMatch.borderTo.orientation.rotate() }
             } else {
-                currentTile = currentMatch.tileTo
-                puzzle[y][x] = currentMatch.borderTo.orientation.rotate() to currentTile
+                // Add other row tiles
+                tile = nextMatch.tileTo
+                puzzle[y][x] = nextMatch.borderTo.orientation.rotate() to tile
+                // Find next match, except for last row tile
                 if (x < puzzleWidth - 1) {
-                    currentMatch =
-                        currentTile.matches.first { it.borderFrom.orientation == currentMatch.borderTo.orientation.rotate().rotate() }
+                    nextMatch =
+                        tile.matches.first { it.borderFrom.orientation == nextMatch.borderTo.orientation.rotate().rotate() }
                 }
             }
         }
@@ -154,7 +150,7 @@ private fun assemble(tiles: List<Tile>): Array<Array<Pair<Orientation, Tile>>> {
 }
 
 private fun findTopLeftCornerMatch(borders: MutableList<Match>): Match {
-    val (match1, match2) = borders.filter { match -> match.borderFrom.orientation.isFlipped }
+    val (match1, match2) = borders
     return if (match1.borderFrom.orientation.rotate() == match2.borderFrom.orientation) match1 else match2
 }
 
@@ -189,65 +185,67 @@ private fun findMatchingBorders(
     return matchingBorders1 to matchingBorders2
 }
 
-private fun rotate(image: Array<Array<Char>>, target: Orientation = Orientation.UP): Array<Array<Char>> {
-    return when (target) {
+fun rotate(image: Array<Array<Char>>, up: Orientation = Orientation.UP): Array<Array<Char>> {
+    return when (up) {
         Orientation.UP -> image
-        Orientation.RIGHT -> rotateImageRight(image)
-        Orientation.DOWN -> rotateImageDown(image)
-        Orientation.LEFT -> rotateImageLeft(image)
-        Orientation.UP_FLIPPED -> rotateImageUpFlipped(image)
-        Orientation.LEFT_FLIPPED -> rotateImageLeftFlipped(image)
-        Orientation.DOWN_FLIPPED -> rotateImageDownFlipped(image)
-        Orientation.RIGHT_FLIPPED -> rotateImageRightFlipped(image)
+        Orientation.LEFT -> rotateLeftBorderUp(image)
+        Orientation.DOWN -> rotateDownBorderUp(image)
+        Orientation.RIGHT -> rotateRightBorderUp(image)
+        Orientation.UP_FLIPPED -> rotateUpFlippedBorderUp(image)
+        Orientation.LEFT_FLIPPED -> rotateLeftFlippedBorderUp(image)
+        Orientation.DOWN_FLIPPED -> rotateDownFlippedBorderUp(image)
+        Orientation.RIGHT_FLIPPED -> rotateRightFlippedBorderUp(image)
     }
 }
 
-fun rotateImageRight(image: Array<Array<Char>>): Array<Array<Char>> {
+fun rotateLeftBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
     val newImage = Array(image.size) { Array(image[0].size) { '.' } }
     for (y in image.indices) for (x in image[0].indices) newImage[x][image.size - y - 1] = image[y][x]
     return newImage
 }
 
-fun rotateImageDown(image: Array<Array<Char>>): Array<Array<Char>> {
+fun rotateDownBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
     val newImage = Array(image.size) { Array(image[0].size) { '.' } }
     for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[image.size - y - 1][image.size - x - 1]
     return newImage
 }
 
-fun rotateImageLeft(image: Array<Array<Char>>): Array<Array<Char>> {
+fun rotateRightBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
     val newImage = Array(image.size) { Array(image[0].size) { '.' } }
     for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[x][image.size - y - 1]
     return newImage
 }
 
-fun rotateImageUpFlipped(image: Array<Array<Char>>): Array<Array<Char>> {
+fun rotateUpFlippedBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
     val newImage = Array(image.size) { Array(image[0].size) { '.' } }
     for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[y][image.size - x - 1]
     return newImage
 }
 
-fun rotateImageLeftFlipped(image: Array<Array<Char>>): Array<Array<Char>> {
-    val newImage = Array(image.size) { Array(image[0].size) { '.' } }
-    for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[x][y]
-    return newImage
-}
-
-fun rotateImageDownFlipped(image: Array<Array<Char>>): Array<Array<Char>> {
-    val newImage = Array(image.size) { Array(image[0].size) { '.' } }
-    for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[image.size - y - 1][x]
-    return newImage
-}
-
-fun rotateImageRightFlipped(image: Array<Array<Char>>): Array<Array<Char>> {
+fun rotateLeftFlippedBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
     val newImage = Array(image.size) { Array(image[0].size) { '.' } }
     for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[image.size - x - 1][image.size - y - 1]
     return newImage
 }
 
+fun rotateDownFlippedBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
+    val newImage = Array(image.size) { Array(image[0].size) { '.' } }
+    for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[image.size - y - 1][x]
+    return newImage
+}
+
+fun rotateRightFlippedBorderUp(image: Array<Array<Char>>): Array<Array<Char>> {
+    val newImage = Array(image.size) { Array(image[0].size) { '.' } }
+    for (y in image.indices) for (x in image[0].indices) newImage[y][x] = image[x][y]
+    return newImage
+}
+
 fun crop(image: Array<Array<Char>>): Array<Array<Char>> {
-    val newImage = Array(image.size - 2) { Array(image[0].size - 2) { '.' } }
-    for (y in 0..7) {
-        for (x in 0..7) {
+    val height = image.size - 2
+    val width = image[0].size - 2
+    val newImage = Array(height) { Array(width) { '.' } }
+    for (y in 0 until height) {
+        for (x in 0 until width) {
             newImage[y][x] = image[y + 1][x + 1]
         }
     }
@@ -278,7 +276,7 @@ fun parseTile(input: List<String>): Tile {
             Border(Orientation.DOWN_FLIPPED, downFlippedBorder),
             Border(Orientation.LEFT_FLIPPED, leftFlippedBorder)
         )
-    ).also { it.image = image }
+    ).also { it.image = crop(image) }
 }
 
 fun stringToImage(string: List<String>): Array<Array<Char>> {
