@@ -14,5 +14,12 @@ fun day02Part1(input: List<String>): Long {
 }
 
 fun day02Part2(input: List<String>): Long {
-    return -1L
+    return input.map { dimensions ->
+        val (l, w, h) = dimensions.split("x").map { it.toLong() }
+        val lw = l + l + w + w
+        val wh = w + w + h + h
+        val hl = h + h + l + l
+        val volume = l * w * h
+        volume + min(listOf(lw, wh, hl))
+    }.sum()
 }
