@@ -18,7 +18,7 @@ internal class Day01KtTest {
         "))), -3",
         ")())()), -3"
     )
-    fun testDay23Part1(input: String, expected: Long) {
+    fun testDay01Part1(input: String, expected: Long) {
         assertEquals(expected, day01Part1(input))
     }
 
@@ -27,7 +27,7 @@ internal class Day01KtTest {
         "), 1",
         "()()), 5"
     )
-    fun testDay23Part2(input: String, expected: Long) {
+    fun testDay01Part2(input: String, expected: Long) {
         assertEquals(expected, day01Part2(input))
     }
 }
