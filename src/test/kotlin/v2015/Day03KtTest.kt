@@ -12,7 +12,17 @@ internal class Day03KtTest {
         "^>v<, 4",
         "^v^v^v^v^v, 2"
     )
-    fun testDay02Part1(input: String, expected: Long) {
+    fun testDay03Part1(input: String, expected: Long) {
         assertEquals(expected, day03Part1(input))
+    }
+
+    @ParameterizedTest(name = "Example #{index} - Moves `{0}` delivers presents to {1} houses")
+    @CsvSource(
+        "^v, 3",
+        "^>v<, 3",
+        "^v^v^v^v^v, 11"
+    )
+    fun testDay03Part2(input: String, expected: Long) {
+        assertEquals(expected, day03Part2(input))
     }
 }
