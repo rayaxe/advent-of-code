@@ -3,6 +3,8 @@ package v2015
 import java.io.File
 import java.nio.charset.Charset
 
+@ExperimentalUnsignedTypes
+@ExperimentalStdlibApi
 fun main() {
 //    println(day01Part1(readLinesFromFile("day01.txt").first()))
 //    println(day01Part2(readLinesFromFile("day01.txt").first()))
@@ -14,10 +16,10 @@ fun main() {
 //    println(day04("iwrupvqb", 6))
 //    println(day05Part1(readLinesFromFile("day05.txt")))
 //    println(day05Part2(readLinesFromFile("day05.txt")))
-//    println(day06Part1(readLinesFromFile("day06.txt")))
-    println(day06Part2(readLinesFromFile("day06.txt")))
-//    println(day07Part1(readLinesFromFile("day07.txt")))
-//    println(day07Part2(readLinesFromFile("day07.txt")))
+//    println(Day06.part1(readLinesFromFile("day06.txt")))
+//    println(Day06.part2(readLinesFromFile("day06.txt")))
+    println(Day07.part1(readLinesFromFile("day07.txt")))
+//    println(Day07.part2(readLinesFromFile("day07.txt")))
 //    println(day08Part1(readLinesFromFile("day08.txt")))
 //    println(day08Part2(readLinesFromFile("day08.txt")))
 //    println(day09Part1(readLinesFromFile("day09.txt")))

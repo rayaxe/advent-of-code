@@ -11,13 +11,13 @@ internal class Day06KtTest {
     @ParameterizedTest(name = "Example #{index} - Instructions {0} results in {1} lights lit")
     @MethodSource("providePart1Examples")
     fun testDay06Part1(input: List<String>, expected: Long) {
-        assertEquals(expected, day06Part1(input))
+        assertEquals(expected, Day06.part1(input))
     }
 
     @ParameterizedTest(name = "Example #{index} - Instructions {0} results in {1} total brightness")
     @MethodSource("providePart2Examples")
     fun testDay06Part2(input: List<String>, expected: Long) {
-        assertEquals(expected, day06Part2(input))
+        assertEquals(expected, Day06.part2(input))
     }
 
     private companion object {
