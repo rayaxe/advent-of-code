@@ -4,114 +4,86 @@ package v2015
 @ExperimentalStdlibApi
 class Day07 {
 
-    private abstract class Gate(val targetRef: String)
-    private abstract class SingleInputGate(val wire: String, targetRef: String) : Gate(targetRef)
-    private abstract class DoubleInputGate(wire: String, val otherWire: String, targetRef: String) :
-        SingleInputGate(wire, targetRef)
+    private abstract class Gate
+    private abstract class InputGate(val wire: String, val targetWire: String) : Gate()
+    private abstract class DoubleInputGate(wire: String, val otherWire: String, targetWire: String) :
+        InputGate(wire, targetWire)
 
-    private abstract class ShiftGate(wire: String, val bitCount: Int, targetRef: String) :
-        SingleInputGate(wire, targetRef)
+    private abstract class ShiftGate(wire: String, val bitCount: Int, targetWire: String) : InputGate(wire, targetWire)
+    private class Signal(val value: UShort) : Gate()
+    private class Wire(wire: String, targetWire: String) : InputGate(wire, targetWire)
+    private class And(wire: String, otherWire: String, targetWire: String) :
+        DoubleInputGate(wire, otherWire, targetWire)
 
-    private class Signal(val value: UShort, targetRef: String) : Gate(targetRef)
-    private class Wire(wire: String, targetRef: String) : SingleInputGate(wire, targetRef)
-    private class And(wire: String, otherWire: String, targetRef: String) : DoubleInputGate(wire, otherWire, targetRef)
-    private class Or(wire: String, otherWire: String, targetRef: String) : DoubleInputGate(wire, otherWire, targetRef)
-    private class Lshift(wire: String, bitCount: Int, targetRef: String) : ShiftGate(wire, bitCount, targetRef)
-    private class Rshift(wire: String, bitCount: Int, targetRef: String) : ShiftGate(wire, bitCount, targetRef)
-    private class Not(wire: String, targetRef: String) : SingleInputGate(wire, targetRef)
+    private class Or(wire: String, otherWire: String, targetWire: String) : DoubleInputGate(wire, otherWire, targetWire)
+    private class Lshift(wire: String, bitCount: Int, targetWire: String) : ShiftGate(wire, bitCount, targetWire)
+    private class Rshift(wire: String, bitCount: Int, targetWire: String) : ShiftGate(wire, bitCount, targetWire)
+    private class Not(wire: String, targetWire: String) : InputGate(wire, targetWire)
 
     companion object {
-        fun part1(instructions: List<String>, targetRef: String = "a"): Long {
-            val gateMap = parse(instructions).toMutableMap()
-            return connect(gateMap, gateMap.getValue(targetRef)).toLong()
+        fun part1(instructions: List<String>, targetWire: String = "a"): Long {
+            val gates = parse(instructions).toMutableMap()
+            return assemble(gates, targetWire).toLong()
         }
 
-        fun part2(input: List<String>): Long {
-            return -1L
+        fun part2(instructions: List<String>, targetWire: String = "a", bValue: UShort): Long {
+            val gates = parse(instructions).toMutableMap()
+            gates["b"] = Signal(bValue)
+            return assemble(gates, targetWire).toLong()
         }
 
-        private fun connect(gateMap: MutableMap<String, Gate>, gate: Gate): UShort {
-            val signal = when (gate) {
-                is Signal -> {
-                    gate
-                }
-                is Wire -> {
-                    Signal(connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)), gate.targetRef)
-                }
-                is And -> {
-                    Signal(
-                        connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)) and
-                                connect(gateMap, getRef(gateMap, gate.otherWire, gate.targetRef)),
-                        gate.targetRef
-                    )
-                }
-                is Or -> {
-                    Signal(
-                        connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)) or
-                                connect(gateMap, getRef(gateMap, gate.otherWire, gate.targetRef)),
-                        gate.targetRef
-                    )
-                }
-                is Lshift -> {
-                    Signal(
-                        connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)) shl gate.bitCount,
-                        gate.targetRef
-                    )
-                }
-                is Rshift -> {
-                    Signal(
-                        connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)) shr gate.bitCount,
-                        gate.targetRef
-                    )
-                }
-                is Not -> {
-                    Signal(
-                        connect(gateMap, getRef(gateMap, gate.wire, gate.targetRef)).inv(),
-                        gate.targetRef
-                    )
-                }
-                else -> {
-                    error("Unknown gate: $gate")
-                }
+        private fun assemble(gates: MutableMap<String, Gate>, target: String = "a"): UShort {
+            fun resolve(wire: String): Gate {
+                return if (wire.toUShortOrNull() == null) gates.getValue(wire) else Signal(wire.toUShort())
             }
-            gateMap[gate.targetRef] = signal
-            return signal.value
-        }
 
-        private fun getRef(gateMap: Map<String, Gate>, wire: String, targetRef: String): Gate {
-            return if (wire.toUShortOrNull() == null) {
-                gateMap.getValue(wire)
-            } else {
-                Signal(wire.toUShort(), targetRef)
+            fun connect(gate: Gate): UShort {
+                val value =
+                    when (gate) {
+                        is Signal -> return gate.value
+                        is Wire -> connect(resolve(gate.wire))
+                        is And -> connect(resolve(gate.wire)) and connect(resolve(gate.otherWire))
+                        is Or -> connect(resolve(gate.wire)) or connect(resolve(gate.otherWire))
+                        is Lshift -> connect(resolve(gate.wire)) shl gate.bitCount
+                        is Rshift -> connect(resolve(gate.wire)) shr gate.bitCount
+                        is Not -> connect(resolve(gate.wire)).inv()
+                        else -> error("Unknown gate: $gate")
+                    }
+                if (gate is InputGate) {
+                    gates[gate.targetWire] = Signal(value)
+                }
+                return value
             }
+
+            return connect(gates.getValue(target))
         }
 
         private fun parse(instructions: List<String>): Map<String, Gate> {
             return instructions.map { gateString ->
-                val (instruction, targetRef) = gateString.split(" -> ")
-                targetRef to when {
+                val (instruction, targetWire) = gateString.split(" -> ")
+                targetWire to when {
                     instruction.contains("AND") -> {
-                        val (leftRef, rightRef) = instruction.split(" AND ")
-                        And(leftRef, rightRef, targetRef)
+                        val (leftWire, rightWire) = instruction.split(" AND ")
+                        And(leftWire, rightWire, targetWire)
                     }
                     instruction.contains("OR") -> {
-                        val (leftRef, rightRef) = instruction.split(" OR ")
-                        Or(leftRef, rightRef, targetRef)
+                        val (leftWire, rightWire) = instruction.split(" OR ")
+                        Or(leftWire, rightWire, targetWire)
                     }
                     instruction.contains("RSHIFT") -> {
-                        val (ref, bitCount) = instruction.split(" RSHIFT ")
-                        Rshift(ref, bitCount.toInt(), targetRef)
+                        val (wire, bitCount) = instruction.split(" RSHIFT ")
+                        Rshift(wire, bitCount.toInt(), targetWire)
                     }
                     instruction.contains("LSHIFT") -> {
-                        val (ref, bitCount) = instruction.split(" LSHIFT ")
-                        Lshift(ref, bitCount.toInt(), targetRef)
+                        val (wire, bitCount) = instruction.split(" LSHIFT ")
+                        Lshift(wire, bitCount.toInt(), targetWire)
                     }
                     instruction.contains("NOT") -> {
-                        val ref = instruction.removePrefix("NOT ")
-                        Not(ref, targetRef)
+                        val wire = instruction.removePrefix("NOT ")
+                        Not(wire, targetWire)
                     }
                     else -> {
-                        Wire(instruction, targetRef)
+                        Wire(instruction, targetWire)
                     }
                 }
             }.toMap()
