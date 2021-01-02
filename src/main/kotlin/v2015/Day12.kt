@@ -1,9 +1,20 @@
 package v2015
 
-fun day12Part1(input: List<String>): Long {
-    return -1L
-}
+class Day12 {
 
-fun day12Part2(input: List<String>): Long {
-    return -1L
+    companion object {
+        private val numberRegex = """-?[0-9]+""".toRegex()
+
+        fun part1(input: List<String>): Long {
+            return input.map {
+                numberRegex.findAll(it)
+                    .map { matchResult -> matchResult.value.toLong() }
+                    .sum()
+            }.sum()
+        }
+
+        fun part2(input: List<String>): Long {
+            return -1L
+        }
+    }
 }
