@@ -21,4 +21,16 @@ internal class Day12KtTest {
     fun testDay12Part1(input: String, expected: Long) {
         assertEquals(expected, Day12.part1(listOf(input)))
     }
+
+    @ParameterizedTest(name = "Example #{index} - `{0}` has a sum of `{1}`")
+    @CsvSource(
+        "[1,2,3]; 6",
+        "[1,{\"c\":\"red\",\"b\":2},3]; 4",
+        "{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}; 0",
+        "[1,\"red\",5]; 6",
+        delimiter = ';'
+    )
+    fun testDay12Part2(input: String, expected: Long) {
+        assertEquals(expected, Day12.part2(listOf(input)))
+    }
 }
