@@ -3,7 +3,7 @@ package v2015
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class Day13KtTest {
+internal class Day13Test {
 
     val input = "Alice would gain 54 happiness units by sitting next to Bob.\n" +
             "Alice would lose 79 happiness units by sitting next to Carol.\n" +

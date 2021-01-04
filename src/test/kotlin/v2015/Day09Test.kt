@@ -3,7 +3,7 @@ package v2015
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class Day09KtTest {
+internal class Day09Test {
 
     private val distances = "London to Dublin = 464\n" +
             "London to Belfast = 518\n" +

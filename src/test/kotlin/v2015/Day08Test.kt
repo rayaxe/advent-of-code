@@ -3,7 +3,7 @@ package v2015
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class Day08KtTest {
+internal class Day08Test {
 
     private val list = listOf("\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\"")
 

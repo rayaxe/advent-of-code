@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-internal class Day12KtTest {
+internal class Day12Test {
 
     @ParameterizedTest(name = "Example #{index} - `{0}` has a sum of `{1}`")
     @CsvSource(
