@@ -33,7 +33,7 @@ fun main() {
 //    println(Day13.part1(readLinesFromFile("day13.txt")))
 //    println(Day13.part2(readLinesFromFile("day13.txt")))
 //    println(Day14.part1(readLinesFromFile("day14.txt"), 2503))
-    println(Day14.part2(readLinesFromFile("day14.txt")))
+    println(Day14.part2(readLinesFromFile("day14.txt"), 2503))
 //    println(day15Part1(readLinesFromFile("day15.txt")))
 //    println(day15Part2(readLinesFromFile("day15.txt")))
 //    println(day16Part1(readLinesFromFile("day16.txt")))

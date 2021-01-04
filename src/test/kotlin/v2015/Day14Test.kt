@@ -15,6 +15,6 @@ internal class Day14Test {
 
     @Test
     fun testDay14Part2() {
-        assertEquals(-1L, Day14.part2(input.split("\n")))
+        assertEquals(689L, Day14.part2(input.split("\n")))
     }
 }
