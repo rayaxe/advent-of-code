@@ -19,7 +19,8 @@ class Day19 {
         }
 
         fun part2(input: List<String>): Long {
-            return -1L
+            val (_, elements) = parse(input)
+            return elements.count { it != "Rn" && it != "Ar" } - elements.count { it == "Y" } * 2 - 1L
         }
 
         private fun parse(input: List<String>): Pair<Map<String, List<String>>, MutableList<String>> {
