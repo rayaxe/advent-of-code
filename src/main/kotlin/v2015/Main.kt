@@ -53,9 +53,8 @@ fun main() {
 //    println(Day23.part1(readLinesFromFile("day23.txt")))
 //    println(Day23.part2(readLinesFromFile("day23.txt")))
 //    println(Day24.part1(readLinesFromFile("day24.txt")))
-    println(Day24.part2(readLinesFromFile("day24.txt")))
-//    println(day25Part1(readLinesFromFile("day25.txt")))
-//    println(day25Part2(readLinesFromFile("day25.txt")))
+//    println(Day24.part2(readLinesFromFile("day24.txt")))
+    println(Day25.part1())
 }
 
 private fun readLinesFromFile(filename: String) = File("src//main//resources//v2015//$filename")
