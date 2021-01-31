@@ -20,7 +20,7 @@ internal class Day18KtTest {
         assertEquals(expected, day18Part2(listOf(input)))
     }
 
-    private companion object {
+    companion object {
         @JvmStatic
         fun provideExpressionExamplesPart1(): Stream<Arguments> {
             return Stream.of(

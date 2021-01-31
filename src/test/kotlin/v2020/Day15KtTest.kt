@@ -1,6 +1,9 @@
 package v2020
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -14,13 +17,15 @@ internal class Day15KtTest {
         assertEquals(expected, day15Part1(input))
     }
 
+    @Disabled("Slow")
+    @Tags(Tag("slow"))
     @ParameterizedTest(name = "Example #{index} - Given the starting numbers `{0}` the 30000000th number spoken is `{1}`")
     @MethodSource("provideMemoryGameExamplesPart2")
     fun testDay15Part2(input: String, expected: Long) {
         assertEquals(expected, day15Part2(input))
     }
 
-    private companion object {
+    companion object {
         @JvmStatic
         fun provideMemoryGameExamplesPart1(): Stream<Arguments> {
             return Stream.of(

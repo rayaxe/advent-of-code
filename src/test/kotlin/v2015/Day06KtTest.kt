@@ -20,7 +20,7 @@ internal class Day06KtTest {
         assertEquals(expected, Day06.part2(input))
     }
 
-    private companion object {
+    companion object {
         @JvmStatic
         fun providePart1Examples(): Stream<Arguments> {
             val turnOnAllLights = listOf("turn on 0,0 through 999,999")

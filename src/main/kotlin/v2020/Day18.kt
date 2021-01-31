@@ -23,7 +23,7 @@ private fun parse(input: List<String>, hasLowerPrecedence: (Char, Char) -> Boole
 // Only supports relevant operations
 private fun parseExpression(input: String, hasLowerPrecedence: (Char, Char) -> Boolean): MutableList<String> {
     val tokens = input.toMutableList()
-    val operators: Deque<Char> = ArrayDeque<Char>()
+    val operators: Deque<Char> = ArrayDeque()
     val output = mutableListOf<String>()
     while (tokens.isNotEmpty()) {
         val token = tokens.removeFirst()

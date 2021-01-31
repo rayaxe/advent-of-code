@@ -1,6 +1,9 @@
 package v2020
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -13,6 +16,8 @@ internal class Day23KtTest {
         assertEquals(expected, day23Part1(labeling, moves))
     }
 
+    @Disabled("Slow")
+    @Tags(Tag("slow"))
     @Test
     fun testDay23Part2() {
         assertEquals(149245887792L, day23Part2("389125467"))

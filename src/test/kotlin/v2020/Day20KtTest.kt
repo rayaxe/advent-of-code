@@ -51,7 +51,7 @@ internal class Day20KtTest {
         assertEquals(imageToString(expected), imageToString(actual))
     }
 
-    private companion object {
+    companion object {
         @JvmStatic
         fun provideImageRotationExamples(): Stream<Arguments> {
             val toImage = { input: String -> stringToImage(input.split("\n")) }

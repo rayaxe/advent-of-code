@@ -29,7 +29,7 @@ internal class Day13KtTest {
         assertEquals(expected, day13Part2(listOf("ignoredValue") + input))
     }
 
-    private companion object {
+    companion object {
         @JvmStatic
         fun provideBusLineExamples(): Stream<Arguments> {
             return Stream.of(
