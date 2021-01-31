@@ -1,9 +1,13 @@
 package v2019
 
-fun day25Part1(input: List<String>): Long {
-    return -1L
-}
+class Day25 {
+    companion object {
+        fun part1(input: List<String>): Long {
+            return -1L
+        }
 
-fun day25Part2(input: List<String>): Long {
-    return -1L
+        fun part2(input: List<String>): Long {
+            return -1L
+        }
+    }
 }
