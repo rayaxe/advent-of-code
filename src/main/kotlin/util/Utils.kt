@@ -1,5 +1,7 @@
 package util
 
+import java.security.MessageDigest
+
 fun greatestCommonDivisor(a: Long, b: Long): Long {
     var gcd = 1L
     var i = 1L
@@ -41,3 +43,6 @@ fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
     this[index1] = this[index2]
     this[index2] = tmp
 }
+
+fun md5(str: String): ByteArray = MessageDigest.getInstance("MD5").digest(str.toByteArray(Charsets.UTF_8))
+fun ByteArray.toHex() = joinToString("") { "%02x".format(it) }
