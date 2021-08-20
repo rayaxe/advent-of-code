@@ -11,8 +11,8 @@ My solutions for [Advent of Code](https://adventofcode.com/) (AoC) programming p
 * 2020 - https://adventofcode.com/2020 - 50⭐
 * 2019 - https://adventofcode.com/2019 - To-do🚧💤
 * 2018 - https://adventofcode.com/2018 - To-do🚧💤
-* 2017 - https://adventofcode.com/2017 - To-do🚧💤
-* 2016 - https://adventofcode.com/2016 - In progress🚧🚀
+* 2017 - https://adventofcode.com/2017 - In progress🚧🚀
+* 2016 - https://adventofcode.com/2016 - 50⭐
 * 2015 - https://adventofcode.com/2015 - 50⭐
 
 ## Run
