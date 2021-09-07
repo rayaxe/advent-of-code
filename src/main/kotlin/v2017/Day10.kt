@@ -6,19 +6,23 @@ class Day10 {
     companion object {
         fun part1(input: List<String>, size: Int = 256): Long {
             val lengths = input.map { it.toInt() }
-            return knotHash(size, lengths).let { (a, b) -> (a * b).toLong() }
+            return hash(size, lengths).let { (a, b) -> (a * b).toLong() }
         }
 
         fun part2(input: List<String>, size: Int = 256): String {
             val lengths = input.map { it.first().toInt() } + listOf(17, 31, 73, 47, 23)
-            val sparseHash = knotHash(size, lengths, 64)
+            return knotHash(size, lengths)
+        }
+
+        fun knotHash(size: Int, lengths: List<Int>): String {
+            val sparseHash = hash(size, lengths, 64)
             val denseHash = sparseHash
                 .chunked(16)
                 .map { it.reduce { acc, element -> acc xor element } }
             return denseHash.toHex()
         }
 
-        private fun knotHash(size: Int, lengthsInput: List<Int>, rounds: Int = 1): List<Int> {
+        private fun hash(size: Int, lengthsInput: List<Int>, rounds: Int = 1): List<Int> {
             val elements = (0 until size).toMutableList()
             var index = 0
             var skipSize = 0
