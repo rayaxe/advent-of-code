@@ -16,8 +16,8 @@
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.test.skip>false</maven.test.skip>
         <maven.version>3.6.3</maven.version>
-        <kotlin.version>1.4.21</kotlin.version>
-        <kotlin-coroutines.version>1.4.2</kotlin-coroutines.version>
+        <kotlin.version>1.5.10</kotlin.version>
+        <kotlin-coroutines.version>1.5.2</kotlin-coroutines.version>
         <kotlin.jvm-target>1.8</kotlin.jvm-target>
         <kotlin.code.style>official</kotlin.code.style>
         <antlr.version>4.9</antlr.version>
