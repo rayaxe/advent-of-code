@@ -5,7 +5,7 @@ import java.nio.charset.Charset
 
 fun main() {
     println(Day01.part1(readLinesFromFile("day01.txt")))
-//    println(Day01.part2(readLinesFromFile("day01.txt")))
+    println(Day01.part2(readLinesFromFile("day01.txt")))
 //    println(Day02.part1(readLinesFromFile("day02.txt")))
 //    println(Day02.part2(readLinesFromFile("day02.txt")))
 //    println(Day03.part1(readLinesFromFile("day03.txt")))
