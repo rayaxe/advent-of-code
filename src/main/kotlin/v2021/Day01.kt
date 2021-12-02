@@ -13,7 +13,7 @@ class Day01 {
         private fun sweep(measurements: List<String>, windowSize: Int = 1): Long {
             return measurements
                 .map { it.toInt() }
-                .windowed(windowSize, 1)
+                .windowed(windowSize)
                 .zipWithNext()
                 .fold(0) { acc, (a, b) -> acc + if (a.sum() < b.sum()) 1 else 0 }
         }
