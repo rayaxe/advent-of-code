@@ -1,7 +1,7 @@
 package v2021
 
 class Day02 {
-    private data class Submarine(var horizontal: Long = 0, var depth: Long = 0, var aim: Long = 0)
+    private data class Submarine(val horizontal: Long = 0, val depth: Long = 0, val aim: Long = 0)
 
     companion object {
         fun part1(input: List<String>): Long {
