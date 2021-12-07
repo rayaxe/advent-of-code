@@ -16,14 +16,13 @@ class Day07 {
             return n * (n + 1) / 2
         }
 
-        private fun alignCrabs(input: String, costsFun: (Int, Long) -> Long): Long {
-            val crabs = input.split(",").map { it.toInt() }
-            val fuel = mutableListOf<Long>()
-            for (position in 0..1000L) {
-                val costs = crabs.fold(0L) { acc, crab -> acc + costsFun(crab, position) }
-                fuel.add(costs)
+        private fun alignCrabs(input: String, costs: (Long, Long) -> Long): Long {
+            val crabs = input.split(",").map { it.toLong() }
+            val min = crabs.minOrNull()!!
+            val max = crabs.maxOrNull()!!
+            return (min..max).minOf { position ->
+                crabs.sumOf { crab -> costs(crab, position) }
             }
-            return fuel.minOrNull()!!
         }
     }
 }
