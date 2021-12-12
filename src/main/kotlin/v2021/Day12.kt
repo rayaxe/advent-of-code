@@ -3,28 +3,28 @@ package v2021
 class Day12 {
     companion object {
         fun part1(input: List<String>): Long {
-            return findPaths(input) { visited, cave ->
-                visited.getOrDefault(cave, 0) + 1 < 2
+            return findPaths(input) { caveVisitCount, cave ->
+                caveVisitCount.getOrDefault(cave, 0) + 1 < 2
             }
         }
 
         fun part2(input: List<String>): Long {
-            return findPaths(input) { visited, cave ->
-                !(visited.values.any { it > 1 } && visited.getOrDefault(cave, 0) + 1 > 1)
+            return findPaths(input) { caveVisitCount, cave ->
+                !(caveVisitCount.values.any { it > 1 } && caveVisitCount.getOrDefault(cave, 0) + 1 > 1)
             }
         }
 
         private fun findPaths(input: List<String>, canVisit: (Map<String, Int>, String) -> Boolean): Long {
             val cavesMap = parse(input)
 
-            fun findPaths(path: List<String>, visited: Map<String, Int>, cave: String): List<List<String>> {
+            fun findPaths(path: List<String>, caveVisitCount: Map<String, Int>, cave: String): List<List<String>> {
                 if (cave == "end") {
                     return listOf(path + "end")
                 }
-                val newVisited = visited.increase(cave)
+                val newCaveVisitCount = caveVisitCount.increase(cave)
                 return cavesMap.getValue(cave)
-                    .filter { it != "start" && canVisit(newVisited, it) }
-                    .flatMap { findPaths(path + cave, newVisited, it) }
+                    .filter { it != "start" && canVisit(newCaveVisitCount, it) }
+                    .flatMap { findPaths(path + cave, newCaveVisitCount, it) }
             }
 
             return cavesMap
@@ -35,11 +35,12 @@ class Day12 {
 
         private fun Map<String, Int>.increase(cave: String): Map<String, Int> {
             return if (cave.first().isUpperCase()) {
+                // Ignore visit count for large caves
                 this
             } else {
-                val newVisited = toMutableMap()
-                newVisited[cave] = getOrDefault(cave, 0) + 1
-                newVisited
+                val caveVisitCount = toMutableMap()
+                caveVisitCount[cave] = getOrDefault(cave, 0) + 1
+                caveVisitCount
             }
         }
 
