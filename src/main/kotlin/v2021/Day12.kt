@@ -23,8 +23,8 @@ class Day12 {
                 }
                 val newCaveVisitCount = caveVisitCount.increase(cave)
                 return cavesMap.getValue(cave)
-                    .filter { it != "start" && canVisit(newCaveVisitCount, it) }
-                    .flatMap { findPaths(path + cave, newCaveVisitCount, it) }
+                    .filter { neighbour -> neighbour != "start" && canVisit(newCaveVisitCount, neighbour) }
+                    .flatMap { neighbour -> findPaths(path + cave, newCaveVisitCount, neighbour) }
             }
 
             return cavesMap
@@ -50,7 +50,7 @@ class Day12 {
                 cavesMap[a] = cavesMap.getOrDefault(a, listOf()) + b
                 cavesMap[b] = cavesMap.getOrDefault(b, listOf()) + a
             }
-            input.forEach { line -> line.split('-').also { add(it[0], it[1]) } }
+            input.forEach { line -> line.split('-').also { (a, b) -> add(a, b) } }
             return cavesMap
         }
     }
