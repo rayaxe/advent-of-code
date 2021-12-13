@@ -4,16 +4,16 @@ class Day13 {
     companion object {
         fun part1(input: List<String>): Long {
             val (coordinates, instructions) = parse(input)
-            val paper = initPaper(coordinates)
-            val newPaper = foldPaper(paper, instructions.first())
-            return newPaper.sumOf { row -> row.count { it == '#' } }.toLong()
+            val resultingPaper = foldPaper(createPaperFrom(coordinates), instructions.first())
+            return resultingPaper.sumOf { row -> row.count { it == '#' } }.toLong()
         }
 
         fun part2(input: List<String>): Long {
             val (coordinates, instructions) = parse(input)
-            val paper = initPaper(coordinates)
-            val newPaper = instructions.fold(paper) { acc, instruction -> foldPaper(acc, instruction) }
-            printPaper(newPaper)
+            val resultingPaper = instructions.fold(createPaperFrom(coordinates)) { paper, instruction ->
+                foldPaper(paper, instruction)
+            }
+            printPaper(resultingPaper)
             return -1L
         }
 
@@ -77,7 +77,7 @@ class Day13 {
             return newPaper
         }
 
-        private fun initPaper(coordinates: List<Pair<Int, Int>>): Array<Array<Char>> {
+        private fun createPaperFrom(coordinates: List<Pair<Int, Int>>): Array<Array<Char>> {
             val width = coordinates.maxOf { it.first } + 1
             val height = coordinates.maxOf { it.second } + 1
             val paper = Array(height) { Array(width) { '.' } }
