@@ -3,17 +3,15 @@ package v2021
 class Day13 {
     companion object {
         fun part1(input: List<String>): Long {
-            val (coordinates, instructions) = parse(input)
-            val resultingPaper = foldPaper(createPaperFrom(coordinates), instructions.first())
-            return resultingPaper.sumOf { row -> row.count { it == '#' } }.toLong()
+            val (initialPaper, instructions) = parse(input)
+            return foldPaper(initialPaper, instructions.first())
+                .sumOf { row -> row.count { it == '#' } }.toLong()
         }
 
         fun part2(input: List<String>): Long {
-            val (coordinates, instructions) = parse(input)
-            val resultingPaper = instructions.fold(createPaperFrom(coordinates)) { paper, instruction ->
-                foldPaper(paper, instruction)
-            }
-            printPaper(resultingPaper)
+            val (initialPaper, instructions) = parse(input)
+            val finalPaper = instructions.fold(initialPaper) { paper, instruction -> foldPaper(paper, instruction) }
+            printPaper(finalPaper)
             return -1L
         }
 
@@ -77,22 +75,22 @@ class Day13 {
             return newPaper
         }
 
-        private fun createPaperFrom(coordinates: List<Pair<Int, Int>>): Array<Array<Char>> {
-            val width = coordinates.maxOf { it.first } + 1
-            val height = coordinates.maxOf { it.second } + 1
-            val paper = Array(height) { Array(width) { '.' } }
-            coordinates.forEach { (x, y) -> paper[y][x] = '#' }
-            return paper
-        }
-
-        private fun parse(input: List<String>): Pair<List<Pair<Int, Int>>, List<Pair<String, Int>>> {
+        private fun parse(input: List<String>): Pair<Array<Array<Char>>, List<Pair<String, Int>>> {
             val coordinates = input
                 .takeWhile { line -> line != "" }
                 .map { it.split(',').let { (x, y) -> x.toInt() to y.toInt() } }
             val instructions = input
                 .takeLastWhile { line -> line != "" }
                 .map { it.removePrefix("fold along ").split('=').let { (axis, pos) -> axis to pos.toInt() } }
-            return coordinates to instructions
+            return createPaperFrom(coordinates) to instructions
+        }
+
+        private fun createPaperFrom(coordinates: List<Pair<Int, Int>>): Array<Array<Char>> {
+            val width = coordinates.maxOf { it.first } + 1
+            val height = coordinates.maxOf { it.second } + 1
+            val paper = Array(height) { Array(width) { '.' } }
+            coordinates.forEach { (x, y) -> paper[y][x] = '#' }
+            return paper
         }
     }
 }
