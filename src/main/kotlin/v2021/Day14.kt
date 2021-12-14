@@ -45,11 +45,7 @@ class Day14 {
 
         private infix fun Map<Char, Long>.add(other: Map<Char, Long>): Map<Char, Long> {
             return (this.keys.asSequence() + other.keys)
-                .associateWith {
-                    sequenceOf(this[it], other[it])
-                        .filterNotNull()
-                        .sum()
-                }
+                .associateWith { this.getOrDefault(it, 0L) + other.getOrDefault(it, 0L) }
         }
     }
 }
